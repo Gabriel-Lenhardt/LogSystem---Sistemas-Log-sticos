@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{{ client.name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">{{ client.name }}</h1>
+  <div class="d-flex gap-2">
+    <a class="btn btn-outline-primary" href="tel:{{ client.phone }}">Ligar</a>
+    {% if client.email %}
+      <a class="btn btn-outline-primary" href="mailto:{{ client.email }}">Email</a>
+    {% endif %}
+    <a class="btn btn-secondary" href="{{ url_for('clients.edit', client_id=client.id) }}">Editar</a>
+    <form method="post" action="{{ url_for('clients.delete', client_id=client.id) }}" onsubmit="return confirm('Delete this client?');">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="btn btn-outline-danger" type="submit">Excluir</button>
+    </form>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-5">
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <dl class="row mb-0">
+          <dt class="col-5">Documento</dt><dd class="col-7">{{ client.document }}</dd>
+          <dt class="col-5">Telefone</dt><dd class="col-7">{{ client.phone }}</dd>
+          <dt class="col-5">Email</dt><dd class="col-7">{{ client.email or "—" }}</dd>
+          <dt class="col-5">Endereço</dt><dd class="col-7">{{ client.address }}</dd>
+          <dt class="col-5">Cidade / UF</dt><dd class="col-7">{{ client.city }} / {{ client.state }}</dd>
+          <dt class="col-5">CEP</dt><dd class="col-7">{{ client.zip_code }}</dd>
+          <dt class="col-5">Criado em</dt><dd class="col-7">{{ client.created_at.strftime("%Y-%m-%d") }}</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-7">
+    <h2 class="h5 mb-2">Histórico de locação</h2>
+    <div class="card shadow-sm">
+      <div class="table-responsive">
+        <table class="table table-sm mb-0">
+          <thead><tr><th>#</th><th>Caçamba</th><th>Prazo inicial</th><th>Prazo fínal</th><th>Status</th><th>Total</th></tr></thead>
+          <tbody>
+            {% for r in client.rentals %}
+            <tr>
+              <td><a href="{{ url_for('rentals.detail', rental_id=r.id) }}">{{ r.id }}</a></td>
+              <td>{{ r.dumpster.identifier }}</td>
+              <td>{{ r.start_date }}</td>
+              <td>{{ r.return_date or r.expected_end_date }}</td>
+              <td>{{ r.status }}</td>
+              <td>{{ r.total_amount and "R$ " ~ r.total_amount or "—" }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="text-center text-muted py-3">Sem locação.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

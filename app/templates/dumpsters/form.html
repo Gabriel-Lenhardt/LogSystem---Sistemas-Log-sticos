@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% from "_macros.html" import render_field, submit_button %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4">{{ title }}</h1>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <form method="post" novalidate>
+      {{ form.hidden_tag() }}
+      <div class="row">
+        <div class="col-md-4">{{ render_field(form.identifier, placeholder="C-001") }}</div>
+        <div class="col-md-4">{{ render_field(form.size) }}</div>
+        <div class="col-md-4">{{ render_field(form.daily_rate) }}</div>
+      </div>
+      {{ render_field(form.status) }}
+      <div class="d-flex gap-2">
+        {{ submit_button(form.submit) }}
+        <a class="btn btn-secondary" href="{{ url_for('dumpsters.index') }}">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

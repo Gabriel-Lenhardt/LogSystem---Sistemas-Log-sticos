@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% from "_macros.html" import render_field, submit_button %}
+{% block title %}Rental #{{ rental.id }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">Locação #{{ rental.id }}</h1>
+  <span class="badge fs-6
+    {% if rental.is_active %}bg-warning text-dark{% else %}bg-success{% endif %}">
+    {{ rental.status }}
+  </span>
+</div>
+
+<div class="row">
+  <div class="col-md-7">
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <dl class="row mb-0">
+          <dt class="col-4">Cliente</dt>
+          <dd class="col-8"><a href="{{ url_for('clients.detail', client_id=rental.client.id) }}">{{ rental.client.name }}</a></dd>
+          <dt class="col-4">Caçamba</dt>
+          <dd class="col-8">{{ rental.dumpster.identifier }} ({{ rental.dumpster.size }} m³)</dd>
+          <dt class="col-4">Endereço de entrega</dt><dd class="col-8">{{ rental.delivery_address }}</dd>
+          <dt class="col-4">Data de início</dt><dd class="col-8">{{ rental.start_date }}</dd>
+          <dt class="col-4">Prazo final</dt>
+          <dd class="col-8">
+            {{ rental.expected_end_date }}
+            {% if rental.is_overdue %}<span class="badge bg-danger">Atrasada</span>{% endif %}
+          </dd>
+          <dt class="col-4">Data de retorno</dt><dd class="col-8">{{ rental.return_date or "—" }}</dd>
+          <dt class="col-4">Material descartado</dt>
+          <dd class="col-8">{{ rental.material_type_label or "—" }}</dd>
+          <dt class="col-4">Diária</dt><dd class="col-8">R$ {{ rental.daily_rate }}</dd>
+          <dt class="col-4">Dias</dt><dd class="col-8">{{ rental.days_elapsed }}</dd>
+          <dt class="col-4">Total</dt>
+          <dd class="col-8">
+            {% if rental.total_amount %}
+              <strong>R$ {{ rental.total_amount }}</strong>
+            {% else %}
+              <span class="text-muted">Total fechamento</span>
+            {% endif %}
+          </dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-5">
+    {% if close_form %}
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h2 class="h5">Locação fechada</h2>
+        <p class="small text-muted">
+          O valor da diária será: <strong>R$ {{ rental.daily_rate }}</strong>  entre a data de início e a data de retorno.
+        </p>
+        <form method="post" action="{{ url_for('rentals.close', rental_id=rental.id) }}" novalidate>
+          {{ close_form.hidden_tag() }}
+          {{ render_field(close_form.return_date) }}
+          {{ render_field(close_form.material_type) }}
+          {{ submit_button(close_form.submit) }}
+        </form>
+      </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+      Valor total: <strong>R$ {{ rental.total_amount }}</strong>.
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

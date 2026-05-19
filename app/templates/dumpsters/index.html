@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Dumpsters{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">Caçamba</h1>
+  <a class="btn btn-primary" href="{{ url_for('dumpsters.create') }}">Nova caçamba</a>
+</div>
+
+<div class="mb-3">
+  <a class="btn btn-sm {{ 'btn-dark' if not status_filter else 'btn-outline-dark' }}" href="{{ url_for('dumpsters.index') }}">Todas</a>
+  {% for s in statuses %}
+    <a class="btn btn-sm {{ 'btn-dark' if status_filter == s.value else 'btn-outline-dark' }}"
+       href="{{ url_for('dumpsters.index', status=s.value) }}">{{ s.value.capitalize() }}</a>
+  {% endfor %}
+</div>
+
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead><tr><th>Identificador</th><th>Tamanho (m³)</th><th>Diária</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        {% for d in dumpsters %}
+        <tr>
+          <td class="fw-bold">{{ d.identifier }}</td>
+          <td>{{ d.size }}</td>
+          <td>R$ {{ d.daily_rate }}</td>
+          <td>
+            <span class="badge
+              {% if d.status == 'available' %}bg-success
+              {% elif d.status == 'rented' %}bg-warning text-dark
+              {% else %}bg-secondary{% endif %}">{{ d.status }}</span>
+          </td>
+          <td>
+            <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('dumpsters.edit', dumpster_id=d.id) }}">Editar</a>
+            <form class="d-inline" method="post" action="{{ url_for('dumpsters.delete', dumpster_id=d.id) }}"
+                  onsubmit="return confirm('Deletar caçamba?');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="btn btn-sm btn-outline-danger" type="submit">Deletar</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="text-center text-muted py-3">Caçamba não registrada.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

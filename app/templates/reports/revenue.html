@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% from "_macros.html" import render_field, submit_button %}
+{% block title %}Revenue report{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4">Período de nota</h1>
+
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <form method="get" novalidate class="row g-3 align-items-end">
+      <div class="col-md-4">{{ render_field(form.start_date) }}</div>
+      <div class="col-md-4">{{ render_field(form.end_date) }}</div>
+      <div class="col-md-4 mb-3">{{ submit_button(form.submit) }}</div>
+    </form>
+    <p class="small text-muted mb-0">
+      O filtro é aplicado na <strong>data de devolução</strong> dos alugueis concluídos.
+    </p>
+  </div>
+</div>
+
+{% if submitted %}
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="card text-bg-success shadow-sm">
+      <div class="card-body">
+        <div class="text-uppercase small">Valor nota</div>
+        <div class="display-6 fw-bold">R$ {{ "%.2f"|format(total_revenue) }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-bg-primary shadow-sm">
+      <div class="card-body">
+        <div class="text-uppercase small">Retirado</div>
+        <div class="display-6 fw-bold">{{ rentals|length }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-bg-secondary shadow-sm">
+      <div class="card-body">
+        <div class="text-uppercase small">Valor total </div>
+        <div class="display-6 fw-bold">{{ total_days }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2 class="h5 mb-2">
+  Locações devolvidas entre {{ form.start_date.data }} e {{ form.end_date.data }}
+</h2>
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-striped mb-0">
+      <thead>
+        <tr>
+          <th>#</th><th>Cliente</th><th>Caçamba</th>
+          <th>Material</th><th>Retorno</th>
+          <th>Dias</th><th>Diária</th><th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rentals %}
+        <tr>
+          <td><a href="{{ url_for('rentals.detail', rental_id=r.id) }}">{{ r.id }}</a></td>
+          <td>{{ r.client.name }}</td>
+          <td>{{ r.dumpster.identifier }}</td>
+          <td>{{ r.material_type_label or "—" }}</td>
+          <td>{{ r.return_date }}</td>
+          <td>{{ r.days_elapsed }}</td>
+          <td>R$ {{ r.daily_rate }}</td>
+          <td><strong>R$ {{ r.total_amount }}</strong></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="9" class="text-center text-muted py-3">Nenhuma locação foi feita nesse período</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

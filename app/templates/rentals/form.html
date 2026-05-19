@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% from "_macros.html" import render_field, submit_button %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4">{{ title }}</h1>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <form method="post" novalidate>
+      {{ form.hidden_tag() }}
+      <div class="row">
+        <div class="col-md-6">{{ render_field(form.client_id) }}</div>
+        <div class="col-md-6">{{ render_field(form.dumpster_id) }}</div>
+      </div>
+      <div class="row">
+      </div>
+      {{ render_field(form.delivery_address) }}
+      <div class="row">
+        <div class="col-md-6">{{ render_field(form.start_date) }}</div>
+        <div class="col-md-6">{{ render_field(form.expected_end_date) }}</div>
+      </div>
+      <p class="text-muted small mb-3">
+        A taxa diária é cobrada da caçamba selecionada no momento da abertura do aluguel.
+        O valor total é calculado automaticamente ao final do aluguel..
+      </p>
+      <div class="d-flex gap-2">
+        {{ submit_button(form.submit) }}
+        <a class="btn btn-secondary" href="{{ url_for('rentals.index') }}">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

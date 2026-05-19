@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "_macros.html" import render_field, submit_button %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4">{{ title }}</h1>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <form method="post" novalidate>
+      {{ form.hidden_tag() }}
+      <div class="row">
+        <div class="col-md-8">{{ render_field(form.name) }}</div>
+        <div class="col-md-4">{{ render_field(form.document) }}</div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">{{ render_field(form.phone) }}</div>
+        <div class="col-md-6">{{ render_field(form.email) }}</div>
+      </div>
+      {{ render_field(form.address) }}
+      <div class="row">
+        <div class="col-md-6">{{ render_field(form.city) }}</div>
+        <div class="col-md-2">{{ render_field(form.state, placeholder="SP") }}</div>
+        <div class="col-md-4">{{ render_field(form.zip_code) }}</div>
+      </div>
+      <div class="d-flex gap-2">
+        {{ submit_button(form.submit) }}
+        <a class="btn btn-secondary" href="{{ url_for('clients.index') }}">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

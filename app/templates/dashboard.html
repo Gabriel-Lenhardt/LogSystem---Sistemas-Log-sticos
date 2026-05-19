@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4">Início</h1>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="card text-bg-primary shadow-sm">
+      <div class="card-body">
+        <div class="text-uppercase small">Clientes</div>
+        <div class="display-6 fw-bold">{{ stats.total_clients }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-bg-success shadow-sm">
+      <div class="card-body">
+        <div class="text-uppercase small">Caçambas disponiveís</div>
+        <div class="display-6 fw-bold">{{ stats.available_dumpsters }} / {{ stats.total_dumpsters }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-bg-warning shadow-sm">
+      <div class="card-body">
+        <div class="text-uppercase small">Locações ativas</div>
+        <div class="display-6 fw-bold">{{ stats.active_rentals }}</div>
+        {% if stats.overdue_rentals %}
+          <div class="small">{{ stats.overdue_rentals }} overdue</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-2">
+  <h2 class="h5 mb-0">Locação recente</h2>
+  <a class="btn btn-sm btn-outline-primary" href="{{ url_for('rentals.create') }}">Nova locação</a>
+</div>
+
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-striped mb-0">
+      <thead>
+        <tr>
+          <th>#</th><th>Cliente</th><th>Caçambas</th><th>Data início</th><th>Data Final</th><th>Status</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in recent_rentals %}
+        <tr>
+          <td>{{ r.id }}</td>
+          <td>{{ r.client.name }}</td>
+          <td>{{ r.dumpster.identifier }}</td>
+          <td>{{ r.start_date }}</td>
+          <td>
+            {{ r.expected_end_date }}
+            {% if r.is_overdue %}<span class="badge bg-danger">Atrasada</span>{% endif %}
+          </td>
+          <td><span class="badge bg-secondary">{{ r.status }}</span></td>
+          <td><a class="btn btn-sm btn-link" href="{{ url_for('rentals.detail', rental_id=r.id) }}">Ver</a></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="text-center text-muted py-3">Sem registro de locação.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
