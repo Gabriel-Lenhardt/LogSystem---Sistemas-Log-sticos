@@ -1,4 +1,4 @@
-# Alfa Caçambas — Web Management System
+# LogSystem - Sistemas Logísticos
 
 Flask web application for managing clients, drivers, dumpsters, and rentals for Alfa Caçambas (Votorantim/SP).
 
